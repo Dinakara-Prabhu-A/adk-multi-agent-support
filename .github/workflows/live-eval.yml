@@ -1,0 +1,22 @@
+name: Live eval
+
+# Runs the agent evaluation suite against a real Gemini model.
+# Manual only, so it never spends API credits on its own.
+# Needs a repository secret named GOOGLE_API_KEY.
+on:
+  workflow_dispatch:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - name: Run ADK evaluation
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_GENAI_USE_VERTEXAI: "FALSE"
+        run: pytest -q tests/test_live_eval.py
