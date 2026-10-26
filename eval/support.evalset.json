@@ -1,0 +1,281 @@
+{
+  "eval_set_id": "support_agent_core",
+  "name": "Core support flows",
+  "description": "Routing, tool use, the human-approval guardrail and refusals.",
+  "eval_cases": [
+    {
+      "evalId": "track_order_in_transit",
+      "conversation": [
+        {
+          "invocationId": "track_order_in_transit-1",
+          "userContent": {
+            "parts": [
+              {
+                "text": "Where is my order ORD-1003?"
+              }
+            ],
+            "role": "user"
+          },
+          "finalResponse": {
+            "parts": [
+              {
+                "text": "Your order ORD-1003, the laptop stand, is in transit with Ekart. Tracking number: EK555000111IN."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediateData": {
+            "toolUses": [
+              {
+                "args": {
+                  "agent_name": "order_status_agent"
+                },
+                "name": "transfer_to_agent"
+              },
+              {
+                "args": {
+                  "order_id": "ORD-1003"
+                },
+                "name": "get_order_status"
+              }
+            ],
+            "toolResponses": [],
+            "intermediateResponses": []
+          },
+          "creationTimestamp": 0.0
+        }
+      ],
+      "creationTimestamp": 0.0,
+      "finalSessionState": {}
+    },
+    {
+      "evalId": "refund_small_auto_approved",
+      "conversation": [
+        {
+          "invocationId": "refund_small_auto_approved-1",
+          "userContent": {
+            "parts": [
+              {
+                "text": "My headphones from order ORD-1001 stopped working, I want a refund."
+              }
+            ],
+            "role": "user"
+          },
+          "finalResponse": {
+            "parts": [
+              {
+                "text": "Your refund of 79 for order ORD-1001 has been issued (refund ID RF-1001). It will reach your original payment method in 5 to 7 business days."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediateData": {
+            "toolUses": [
+              {
+                "args": {
+                  "agent_name": "refunds_agent"
+                },
+                "name": "transfer_to_agent"
+              },
+              {
+                "args": {
+                  "order_id": "ORD-1001"
+                },
+                "name": "check_refund_eligibility"
+              },
+              {
+                "args": {
+                  "order_id": "ORD-1001",
+                  "amount": 79.0,
+                  "reason": "Headphones stopped working"
+                },
+                "name": "request_refund"
+              }
+            ],
+            "toolResponses": [],
+            "intermediateResponses": []
+          },
+          "creationTimestamp": 0.0
+        }
+      ],
+      "creationTimestamp": 0.0,
+      "finalSessionState": {}
+    },
+    {
+      "evalId": "refund_large_needs_human_approval",
+      "conversation": [
+        {
+          "invocationId": "refund_large_needs_human_approval-1",
+          "userContent": {
+            "parts": [
+              {
+                "text": "Please refund order ORD-1002, I changed my mind about the smartwatch."
+              }
+            ],
+            "role": "user"
+          },
+          "finalResponse": {
+            "parts": [
+              {
+                "text": "Your refund request of 249 for order ORD-1002 needs approval from a support lead because it is above 100. It has been queued and you will get an update within 24 hours."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediateData": {
+            "toolUses": [
+              {
+                "args": {
+                  "agent_name": "refunds_agent"
+                },
+                "name": "transfer_to_agent"
+              },
+              {
+                "args": {
+                  "order_id": "ORD-1002"
+                },
+                "name": "check_refund_eligibility"
+              },
+              {
+                "args": {
+                  "order_id": "ORD-1002",
+                  "amount": 249.0,
+                  "reason": "Changed mind"
+                },
+                "name": "request_refund"
+              }
+            ],
+            "toolResponses": [],
+            "intermediateResponses": []
+          },
+          "creationTimestamp": 0.0
+        }
+      ],
+      "creationTimestamp": 0.0,
+      "finalSessionState": {}
+    },
+    {
+      "evalId": "refund_outside_return_window",
+      "conversation": [
+        {
+          "invocationId": "refund_outside_return_window-1",
+          "userContent": {
+            "parts": [
+              {
+                "text": "I want to return my keyboard, order ORD-1004."
+              }
+            ],
+            "role": "user"
+          },
+          "finalResponse": {
+            "parts": [
+              {
+                "text": "Order ORD-1004 was delivered 57 days ago, outside the 30-day return window, so it can't be refunded. I can escalate it to a human agent if you'd like."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediateData": {
+            "toolUses": [
+              {
+                "args": {
+                  "agent_name": "refunds_agent"
+                },
+                "name": "transfer_to_agent"
+              },
+              {
+                "args": {
+                  "order_id": "ORD-1004"
+                },
+                "name": "check_refund_eligibility"
+              }
+            ],
+            "toolResponses": [],
+            "intermediateResponses": []
+          },
+          "creationTimestamp": 0.0
+        }
+      ],
+      "creationTimestamp": 0.0,
+      "finalSessionState": {}
+    },
+    {
+      "evalId": "policy_refund_timeline",
+      "conversation": [
+        {
+          "invocationId": "policy_refund_timeline-1",
+          "userContent": {
+            "parts": [
+              {
+                "text": "How long do refunds take to reach my account?"
+              }
+            ],
+            "role": "user"
+          },
+          "finalResponse": {
+            "parts": [
+              {
+                "text": "Approved refunds reach your original payment method within 5 to 7 business days."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediateData": {
+            "toolUses": [
+              {
+                "args": {
+                  "agent_name": "policy_agent"
+                },
+                "name": "transfer_to_agent"
+              },
+              {
+                "args": {
+                  "query": "refund timeline"
+                },
+                "name": "search_policy"
+              }
+            ],
+            "toolResponses": [],
+            "intermediateResponses": []
+          },
+          "creationTimestamp": 0.0
+        }
+      ],
+      "creationTimestamp": 0.0,
+      "finalSessionState": {}
+    },
+    {
+      "evalId": "out_of_scope_request",
+      "conversation": [
+        {
+          "invocationId": "out_of_scope_request-1",
+          "userContent": {
+            "parts": [
+              {
+                "text": "Can you write me a poem about cricket?"
+              }
+            ],
+            "role": "user"
+          },
+          "finalResponse": {
+            "parts": [
+              {
+                "text": "Sorry, I can only help with orders, refunds and store policies."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediateData": {
+            "toolUses": [],
+            "toolResponses": [],
+            "intermediateResponses": []
+          },
+          "creationTimestamp": 0.0
+        }
+      ],
+      "creationTimestamp": 0.0,
+      "finalSessionState": {}
+    }
+  ],
+  "creation_timestamp": 0.0
+}
